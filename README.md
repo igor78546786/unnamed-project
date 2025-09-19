@@ -1,6 +1,6 @@
 # unnamed-project
 
-Projeto de desenvolvimento de webapp para cálculo com métodos numéricos, em C, usando Kore framework
+Projeto de desenvolvimento de webapp para cálculo com métodos numéricos.
 
 ## Quadro no Trello (início de projeto):
 <img width="1919" height="821" alt="image" src="https://github.com/user-attachments/assets/295a811e-b291-4ddd-8c92-c55df9b14bd1" />
