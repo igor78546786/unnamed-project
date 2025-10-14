@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numeric Lab - Início</title>
+    <link rel="stylesheet" href="{% static 'calculadora/style.css' %}">
+</head>
+<body>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-placeholder"></div>
+                <span class="app-name">NUMERIC LAB</span>
+            </div>
+            <div class="profile-icon"></div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="nav-item active"> <span class="icon">🏠</span>
+                        <a href="{% url 'pagina_inicial' %}">Página Inicial</a>
+                    </li>
+                    <li class="nav-item">
+                        <span class="icon">📈</span>
+                        <a href="{% url 'encontrar_raiz' %}">Encontrar Raíz</a>
+                    </li>
+                    </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="card-grid">
+                <a href="{% url 'encontrar_raiz' %}" class="card-link">
+                    <div class="card">
+                        <span class="card-icon">📈</span>
+                        <h3>Encontrar Raíz de uma Equação</h3>
+                        <p>Encontre o valor de x para o qual f(x) = 0.</p>
+                    </div>
+                </a>
+                
+                <div class="card disabled">
+                    <span class="card-icon">📄</span>
+                    <h3>Sistemas Lineares</h3>
+                    <p>(Em breve)</p>
+                </div>
+            </div>
+            
+            <div class="recent-analyses">
+                <h3>Análises Recentes</h3>
+                <ul>
+                    {% for analise in analises %}
+                        <li>{{ analise }}</li>
+                    {% empty %}
+                        <li>Nenhuma análise foi realizada ainda.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>
