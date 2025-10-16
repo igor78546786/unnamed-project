@@ -12,4 +12,3 @@ Projeto de desenvolvimento de webapp para cálculo com métodos numéricos.
 <img width="1074" height="765" alt="image" src="https://github.com/user-attachments/assets/a20e0a1c-3608-49ae-9618-0cec2fbccb05" />
 
 ## Diagrama de atividades do funcionamento do sistema:
-<img width="264" height="1014" alt="image" src="https://github.com/user-attachments/assets/b7f3ea2d-a5fb-4d7a-9b65-0c1edff97a35" />
