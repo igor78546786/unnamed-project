@@ -19,4 +19,4 @@ def pagina_encontrar_raiz(request):
         contexto['resultado'] = resultado_final
         contexto['metodo_utilizado'] = metodo.replace("_", " ").title()
 
-    return render(request, 'calculadora/pagina_encontrar_raiz.html', contexto)
+    return render(request, 'calculadora/pagina_encontrar_raiz.html')
