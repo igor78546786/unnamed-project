@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 def pagina_inicial(request):
-    return render(request, 'calculadora/pagina_inicial.html', contexto)
+    return render(request, 'calculadora/pagina_inicial.html')
 
 def pagina_encontrar_raiz(request):
     contexto = {}
