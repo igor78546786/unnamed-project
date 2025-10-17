@@ -17,8 +17,11 @@ def pagina_encontrar_raiz(request):
         intervalo_b = float(request.POST.get('intervalo_b'))
         metodo = request.POST.get('metodo')
 
-        #implementar logica do calculo aqui
-        resultado_final = 1.52138
+
+
+        resultado_final = 1.52138 # placeholder
+
+
         Analise.objects.create(
             funcao_texto=funcao,
             intervalo_a=intervalo_a,
