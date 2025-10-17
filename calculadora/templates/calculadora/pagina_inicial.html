@@ -46,16 +46,6 @@
                 </div>
             </div>
             
-            <div class="recent-analyses">
-                <h3>Análises Recentes</h3>
-                <ul>
-                    {% for analise in analises %}
-                        <li>Análise de '{{ analise.funcao_texto }}' em {{ analise.criado_em|date:"d/m/y" }}</li>
-                    {% empty %}
-                        <li>Nenhuma análise foi realizada ainda.</li>
-                    {% endfor %}
-                </ul>
-            </div>
         </main>
     </div>
 

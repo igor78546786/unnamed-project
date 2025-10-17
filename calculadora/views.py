@@ -1,12 +1,6 @@
 from django.shortcuts import render
-from .models import Analise
 
 def pagina_inicial(request):
-    analises_recentes = Analise.objects.order_by('-criado_em')[:5]
-
-    contexto = {
-        'analises': analises_recentes
-    }
     return render(request, 'calculadora/pagina_inicial.html', contexto)
 
 def pagina_encontrar_raiz(request):
@@ -22,13 +16,6 @@ def pagina_encontrar_raiz(request):
         resultado_final = 1.52138 # placeholder
 
 
-        Analise.objects.create(
-            funcao_texto=funcao,
-            intervalo_a=intervalo_a,
-            intervalo_b=intervalo_b,
-            metodo_utilizado=metodo,
-            resultado=resultado_final
-        )
         contexto['resultado'] = resultado_final
         contexto['metodo_utilizado'] = metodo.replace("_", " ").title()
 
