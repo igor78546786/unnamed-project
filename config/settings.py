@@ -33,6 +33,10 @@ ALLOWED_HOSTS = [
     'localhost',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://calculosnumericos-edhjeeedduh9awe3.brazilsouth-01.azurewebsites.net' 
+]
+
 # Application definition
 
 INSTALLED_APPS = [
