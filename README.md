@@ -11,5 +11,6 @@ Projeto de desenvolvimento de webapp para cálculo com métodos numéricos.
 ## Diagrama de atividades do funcionamento do sistema:
 <img width="348" height="1131" alt="image" src="https://github.com/user-attachments/assets/69375093-952f-4d2a-9895-0efe3042de8a" />
 
-## Issue tracker:
-<img width="1544" height="298" alt="image" src="https://github.com/user-attachments/assets/dd6c5b71-087b-45fc-91b3-fac19d7d8b5d" />
+
+
+https://calculosnumericos-edhjeeedduh9awe3.brazilsouth-01.azurewebsites.net/
