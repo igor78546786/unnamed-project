@@ -1,77 +1,136 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Encontrar Raíz - Nome</title>
-    <link rel="stylesheet" href="{% static 'calculadora/style.css' %}">
-</head>
-<body>
+{% extends 'calculadora/base.html' %}
 
-    <div class="app-container">
-        <aside class="sidebar">
-            <div class="logo-container">
-                <div class="logo-placeholder"></div>
-                <span class="app-name">Nome</span>
-            </div>
-            <div class="profile-icon"></div>
-            <nav class="main-nav">
-                <ul>
-                    <li class="nav-item">
-                        <span class="icon">🏠</span>
-                        <a href="{% url 'pagina_inicial' %}">Página Inicial</a>
-                    </li>
-                    <li class="nav-item active"> <span class="icon">📈</span>
-                        <a href="{% url 'encontrar_raiz' %}">Encontrar Raíz</a>
-                    </li>
-                    </ul>
-            </nav>
-        </aside>
+{% block title %}Encontrar Raíz {% endblock %}
 
-        <main class="main-content">
-            <header class="tool-header">
-                <h1>Encontrar Raíz de uma Equação</h1>
-                <p>Insira os dados para encontrar a solução de f(x) = 0.</p>
-            </header>
+{% block content %}
+    <header class="tool-header">
+        <i class="tool-icon fa-solid fa-chart-line"></i>
+        <h1>Encontrar Raíz de uma Equação</h1>
+        <p>Insira os dados para encontrar a solução de f(x) = 0.</p>
+    </header>
 
-            <div class="form-panel">
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="funcao">Função f(x)</label>
-                        <input type="text" id="funcao" name="funcao_texto" placeholder="Ex: x**3 - 2*x + 1" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Intervalo [a, b]</label>
-                        <div class="input-group">
-                            <input type="number" step="any" name="intervalo_a" placeholder="a" required>
-                            <input type="number" step="any" name="intervalo_b" placeholder="b" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="metodo">Método de Cálculo</label>
-                        <select id="metodo" name="metodo" required>
-                            <option value="bissecao">Método da Bisseção</option>
-                            <option value="falsa_posicao">Método da Falsa Posição</option>
-                            <option value="newton">Método de Newton-Raphson</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="cta-button">Calcular Raíz</button>
-                </form>
+    <div class="form-panel">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="funcao">Função f(x)</label>
+                <input type="text" id="funcao" name="funcao_texto" placeholder="Ex: x**3 - 2*x + 1" required>
             </div>
             
-            {% if resultado %}
-            <section class="results-section">
-                <div class="result-card">
-                    <h2>Resultado Encontrado</h2>
-                    <p class="result-value">x ≈ {{ resultado }}</p>
-                    <p class="result-meta">Calculado com o <strong>{{ metodo_utilizado }}</strong>.</p>
+            <div class="form-group">
+                <label for="metodo">Método de Cálculo</label>
+                <select id="seletor-metodo" name="metodo" required>
+                    <option value="bissecao" selected>Método da Bisseção</option>
+                    <option value="falsa_posicao">Método da Falsa Posição</option>
+                    <option value="newton">Método de Newton-Raphson</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="grupo-intervalo">
+                <label>Intervalo [a, b]</label>
+                <div class="input-group">
+                    <input type="number" step="any" name="intervalo_a" placeholder="a">
+                    <input type="number" step="any" name="intervalo_b" placeholder="b">
                 </div>
-            </section>
-            {% endif %}
-        </main>
+            </div>
+
+            <div class="form-group hidden" id="grupo-estimativa">
+                <label for="estimativa">Estimativa Inicial (x0)</label>
+                <input type="number" step="any" id="estimativa" name="estimativa_inicial" placeholder="Ex: 1.5">
+            </div>
+
+            <button type="submit" class="cta-button">Calcular Raíz</button>
+        </form>
     </div>
 
-</body>
-</html>
+    {% if erro %}
+    <div class="erro-card">
+        <h2>Erro no Cálculo</h2>
+        <p>{{ erro }}</p>
+    </div>
+    {% endif %}
+
+    {% if resultado %}
+    <section class="results-section">
+        
+        <div class="result-card">
+            <h2>Resultado Encontrado</h2>
+            <p class="result-value">x ≈ {{ resultado }}</p>
+            <p class="result-meta">Calculado com o <strong>{{ metodo_utilizado }}</strong> em {{ iteracoes|length }} iterações.</p>
+        </div>
+
+        {% if metodo_utilizado == "Bissecao" or metodo_utilizado == "Falsa Posicao" %}
+        <div class="step-by-step">
+            <h3>Detalhes da Convergência (Passo a Passo)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Iteração</th>
+                        <th>a</th>
+                        <th>b</th>
+                        <th>Ponto Médio (p)</th>
+                        <th>f(p)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for passo in iteracoes %}
+                    <tr>
+                        <td>{{ passo.n }}</td>
+                        <td>{{ passo.a|floatformat:5 }}</td>
+                        <td>{{ passo.b|floatformat:5 }}</td>
+                        <td>{{ passo.p|floatformat:5 }}</td>
+                        <td>{{ passo.f_p|floatformat:5 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% elif metodo_utilizado == "Newton" %}
+        <div class="step-by-step">
+            <h3>Detalhes da Convergência (Passo a Passo)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Iteração (i)</th>
+                        <th>xi</th>
+                        <th>f(xi)</th>
+                        <th>f'(xi)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for passo in iteracoes %}
+                    <tr>
+                        <td>{{ passo.n }}</td>
+                        <td>{{ passo.xi|floatformat:5 }}</td>
+                        <td>{{ passo.f_xi|floatformat:5 }}</td>
+                        <td>{{ passo.df_xi|floatformat:5 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+    </section>
+    {% endif %}
+
+    <script>
+        const seletorMetodo = document.getElementById('seletor-metodo');
+        const grupoIntervalo = document.getElementById('grupo-intervalo');
+        const grupoEstimativa = document.getElementById('grupo-estimativa');
+
+        function atualizarCampos() {
+            if (seletorMetodo.value === 'newton') {
+                grupoIntervalo.classList.add('hidden');
+                grupoEstimativa.classList.remove('hidden');
+            } else {
+                grupoIntervalo.classList.remove('hidden');
+                grupoEstimativa.classList.add('hidden');
+            }
+        }
+        seletorMetodo.addEventListener('change', atualizarCampos);
+        atualizarCampos();
+    </script>
+{% endblock %}

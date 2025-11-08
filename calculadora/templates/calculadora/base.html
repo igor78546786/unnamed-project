@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>{% block title %}nome{% endblock %}</title>
+    
+    <link rel="stylesheet" href="{% static 'calculadora/style.css' %}">
+    
+    <script src="https://kit.fontawesome.com/58487b1621.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-placeholder"></div>
+                <span class="app-name">Nome</span>
+            </div>
+            <div class="profile-icon"></div>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li class="nav-item {% if request.resolver_match.url_name == 'pagina_inicial' %}active{% endif %}">
+                        <i class="icon fa-solid fa-house"></i>
+                        <a href="{% url 'pagina_inicial' %}">Página Inicial</a>
+                    </li>
+                    <li class="nav-item {% if request.resolver_match.url_name == 'encontrar_raiz' %}active{% endif %}">
+                        <i class="icon fa-solid fa-chart-line"></i>
+                        <a href="{% url 'encontrar_raiz' %}">Encontrar Raíz</a>
+                    </li>
+                    </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            {% block content %}
+            {% endblock %}
+        </main>
+        
+    </div>
+
+</body>
+</html>

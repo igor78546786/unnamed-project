@@ -1,53 +1,21 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nome - Início</title>
-    <link rel="stylesheet" href="{% static 'calculadora/style.css' %}">
-</head>
-<body>
+{% extends 'calculadora/base.html' %}
 
-    <div class="app-container">
-        <aside class="sidebar">
-            <div class="logo-container">
-                <div class="logo-placeholder"></div>
-                <span class="app-name">Nome</span>
-            </div>
-            <div class="profile-icon"></div>
-            <nav class="main-nav">
-                <ul>
-                    <li class="nav-item active"> <span class="icon">🏠</span>
-                        <a href="{% url 'pagina_inicial' %}">Página Inicial</a>
-                    </li>
-                    <li class="nav-item">
-                        <span class="icon">📈</span>
-                        <a href="{% url 'encontrar_raiz' %}">Encontrar Raíz</a>
-                    </li>
-                    </ul>
-            </nav>
-        </aside>
+{% block title %}Página Inicial{% endblock %}
 
-        <main class="main-content">
-            <div class="card-grid">
-                <a href="{% url 'encontrar_raiz' %}" class="card-link">
-                    <div class="card">
-                        <span class="card-icon">📈</span>
-                        <h3>Encontrar Raíz de uma Equação</h3>
-                        <p>Encontre o valor de x para o qual f(x) = 0.</p>
-                    </div>
-                </a>
-                
-                <div class="card disabled">
-                    <span class="card-icon">📄</span>
-                    <h3>Sistemas Lineares</h3>
-                    <p>(Em breve)</p>
-                </div>
+{% block content %}
+    <div class="card-grid">
+        <a href="{% url 'encontrar_raiz' %}" class="card-link">
+            <div class="card">
+                <i class="card-icon fa-solid fa-chart-line"></i>
+                <h3>Encontrar Raíz de uma Equação</h3>
+                <p>Encontre o valor de x para o qual f(x) = 0.</p>
             </div>
-            
-        </main>
+        </a>
+        
+        <div class="card disabled">
+            <i class="card-icon fa-solid fa-border-all"></i>
+            <h3>Sistemas Lineares</h3>
+            <p>(Em breve - H8)</p>
+        </div>
     </div>
-
-</body>
-</html>
+{% endblock %}
