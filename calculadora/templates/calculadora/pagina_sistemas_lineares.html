@@ -14,9 +14,11 @@
             {% csrf_token %}
             
             <div class="form-group">
-                <label for="matrix-size">Número de equações (ex: 3 para 3x3)</label>
-                <div class="input-group">
-                    <input type="number" id="matrix-size" name="matrix_size" min="2" max="10" value="3" class="form-control" style="flex-grow: 3;">
+                <label>Tamanho do Sistema (M equações, N variáveis)</label>
+                <div class="input-group-columns">
+                    <input type="number" id="matrix-rows" name="matrix_rows" min="2" max="10" value="3" class="form-control" title="Número de Equações (Linhas)">
+                    <span>x</span>
+                    <input type="number" id="matrix-cols" name="matrix_cols" min="2" max="10" value="3" class="form-control" title="Número de Variáveis (Colunas)">
                     <button type="button" id="generate-matrix-btn" class="cta-button-secondary">Gerar Matriz</button>
                 </div>
             </div>
@@ -40,33 +42,68 @@
         </form>
     </div>
 
+    {% if erro %}
+    <div class="erro-card">
+        <h2>Erro no Cálculo</h2>
+        <p>{{ erro }}</p>
+    </div>
+    {% endif %}
+
     {% if solucao %}
     <section class="results-section">
+        
         <div class="result-card">
-            <h2>Solução Encontrada</h2>
-            <p class="result-value">{{ solucao }}</p>
+            <h2>Solução Encontrada (Vetor x)</h2>
+            <div class="solution-vector">
+                {% for val in solucao %}
+                    <p>x<sub>{{ forloop.counter }}</sub> ≈ {{ val }}</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="step-by-step">
+            <h3>Detalhes da Eliminação (Passo a Passo)</h3>
+            
+            {% for passo in iteracoes %}
+                <div class="matrix-step">
+                    <h4>{{ passo.passo }}</h4>
+                    <table class="matrix-table">
+                        <tbody>
+                            {% for linha in passo.matriz %}
+                            <tr>
+                                {% for valor in linha %}
+                                <td>{{ valor|floatformat:4 }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
         </div>
     </section>
     {% endif %}
 
     <script>
-        const sizeInput = document.getElementById('matrix-size');
+        const rowsInput = document.getElementById('matrix-rows');
+        const colsInput = document.getElementById('matrix-cols');
         const generateBtn = document.getElementById('generate-matrix-btn');
         const gridContainer = document.getElementById('matrix-grid-container');
 
         function generateMatrix() {
-            const size = parseInt(sizeInput.value);
-            if (size < 2 || size > 10) {
-                alert("Por favor, insira um tamanho entre 2 e 10.");
+            const M = parseInt(rowsInput.value); 
+            const N = parseInt(colsInput.value); 
+
+            if (M < 2 || M > 10 || N < 2 || N > 10) {
+                alert("Por favor, insira um tamanho entre 2 e 10 para linhas e colunas.");
                 return;
             }
 
             gridContainer.innerHTML = '';
+            gridContainer.style.gridTemplateColumns = `repeat(${N}, 1fr) auto 1fr`;
 
-            gridContainer.style.gridTemplateColumns = `repeat(${size}, 1fr) auto 1fr`;
-
-            for (let i = 0; i < size; i++) {
-                for (let j = 0; j < size; j++) {
+            for (let i = 0; i < M; i++) {
+                for (let j = 0; j < N; j++) {
                     const input = document.createElement('input');
                     input.type = 'number';
                     input.step = 'any';
@@ -89,6 +126,7 @@
                 gridContainer.appendChild(inputB);
             }
         }
+
         generateMatrix();
         generateBtn.addEventListener('click', generateMatrix);
     </script>

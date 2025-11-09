@@ -151,3 +151,61 @@ tbody tr:nth-child(even) { background-color: #f8f9fa; }
 .cta-button-secondary:hover {
     background-color: #e7f5ff;
 }
+
+.input-group-columns {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-group-columns input {
+    text-align: center;
+}
+
+.input-group-columns span {
+    font-size: 1.2rem;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.input-group-columns .cta-button-secondary {
+    flex-grow: 0;
+    white-space: nowrap;
+}
+
+.solution-vector {
+    padding: 10px 0;
+}
+.solution-vector p {
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.6;
+    color: #333;
+    text-align: left;
+    display: inline-block;
+    margin: 0 20px;
+}
+
+.matrix-step {
+    margin-bottom: 25px;
+}
+.matrix-step h4 {
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 10px;
+}
+
+.matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+}
+.matrix-table td {
+    border: 1px solid #dee2e6;
+    padding: 8px 12px;
+    text-align: right;
+}
+.matrix-table tr:nth-child(even) {
+    background-color: #f8f9fa;
+}

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 import sympy
-from .metodos import calcular_bissecao, calcular_falsa_posicao, calcular_newton
+from .metodos import calcular_bissecao, calcular_falsa_posicao, calcular_newton, calcular_gauss
 
 def pagina_inicial(request):
     return render(request, 'calculadora/pagina_inicial.html')
@@ -61,25 +61,37 @@ def pagina_sistemas_lineares(request):
     
     if request.method == 'POST':
         try:
-            size = int(request.POST.get('matrix_size'))
+            M_linhas = int(request.POST.get('matrix_rows'))
+            N_colunas = int(request.POST.get('matrix_cols'))
             metodo = request.POST.get('metodo')
+
+            if M_linhas != N_colunas:
+                contexto['erro'] = f"Erro: O método de Eliminação Gaussiana implementado assume um sistema quadrado (Nº de equações = Nº de variáveis). Você inseriu {M_linhas}x{N_colunas}."
+                return render(request, 'calculadora/pagina_sistemas_lineares.html', contexto)
 
             matriz_A = []
             vetor_b = []
 
-            for i in range(size):
+            for i in range(M_linhas):
                 linha = []
-                for j in range(size):
+                for j in range(N_colunas):
                     nome_campo_a = f'a_{i}_{j}'
                     valor = float(request.POST.get(nome_campo_a))
                     linha.append(valor)
                 
                 matriz_A.append(linha)
-
                 nome_campo_b = f'b_{i}'
                 valor_b = float(request.POST.get(nome_campo_b))
                 vetor_b.append(valor_b)
-            contexto['erro'] = "Lógica de cálculo ainda não implementada."
+
+            if metodo == 'gauss':
+                solucao, iteracoes = calcular_gauss(matriz_A, vetor_b)
+
+                if solucao is not None:
+                    contexto['solucao'] = [round(val, 5) for val in solucao]
+                    contexto['iteracoes'] = iteracoes
+                else:
+                    contexto['erro'] = "A matriz é singular. O sistema não possui solução única ou tem infinitas soluções."
 
         except Exception as e:
             contexto['erro'] = f"Erro ao processar a matriz: {e}"

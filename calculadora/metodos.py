@@ -68,3 +68,39 @@ def calcular_newton(funcao, derivada, estimativa_inicial, tolerancia=1e-5, max_i
 
     print("Aviso: O método excedeu o número máximo de iterações.")
     return xi, iteracoes
+
+def calcular_gauss(A, b):
+    A = np.array(A, dtype=float)
+    b = np.array(b, dtype=float)
+    
+    n = len(b)
+    iteracoes = []
+    Aug = np.c_[A, b]
+    iteracoes.append({'passo': 'Matriz Aumentada Inicial', 'matriz': Aug.tolist()})
+
+    for k in range(n - 1):
+        max_index = np.argmax(np.abs(Aug[k:, k])) + k
+        
+        if max_index != k:
+            Aug[[k, max_index]] = Aug[[max_index, k]]
+            iteracoes.append({'passo': f'Pivotação: Linha {k+1} <-> Linha {max_index+1}', 'matriz': Aug.tolist()})
+
+        if Aug[k, k] == 0:
+            print("Erro: Matriz singular, pivô zero encontrado.")
+            return None, iteracoes
+
+        for i in range(k + 1, n):
+            fator = Aug[i, k] / Aug[k, k]
+            Aug[i, k:] = Aug[i, k:] - fator * Aug[k, k:]
+        
+        iteracoes.append({'passo': f'Eliminação na coluna {k+1}', 'matriz': Aug.tolist()})
+
+    if Aug[n - 1, n - 1] == 0:
+        print("Erro: Matriz singular após eliminação.")
+        return None, iteracoes
+
+    x = np.zeros(n, dtype=float)
+    for i in range(n - 1, -1, -1):
+        soma = np.dot(Aug[i, i+1:n], x[i+1:n])
+        x[i] = (Aug[i, n] - soma) / Aug[i, i]
+    return x.tolist(), iteracoes
