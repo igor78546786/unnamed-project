@@ -55,3 +55,33 @@ def pagina_encontrar_raiz(request):
         except Exception as e:
             contexto['erro'] = f"Erro ao processar a função: {e}. (Lembre-se de usar '**' para potência)"
     return render(request, 'calculadora/pagina_encontrar_raiz.html', contexto)
+
+def pagina_sistemas_lineares(request):
+    contexto = {}
+    
+    if request.method == 'POST':
+        try:
+            size = int(request.POST.get('matrix_size'))
+            metodo = request.POST.get('metodo')
+
+            matriz_A = []
+            vetor_b = []
+
+            for i in range(size):
+                linha = []
+                for j in range(size):
+                    nome_campo_a = f'a_{i}_{j}'
+                    valor = float(request.POST.get(nome_campo_a))
+                    linha.append(valor)
+                
+                matriz_A.append(linha)
+
+                nome_campo_b = f'b_{i}'
+                valor_b = float(request.POST.get(nome_campo_b))
+                vetor_b.append(valor_b)
+            contexto['erro'] = "Lógica de cálculo ainda não implementada."
+
+        except Exception as e:
+            contexto['erro'] = f"Erro ao processar a matriz: {e}"
+
+    return render(request, 'calculadora/pagina_sistemas_lineares.html', contexto)

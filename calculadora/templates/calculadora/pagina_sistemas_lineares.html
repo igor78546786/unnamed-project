@@ -1,0 +1,95 @@
+{% extends 'calculadora/base.html' %}
+
+{% block title %}Sistemas Lineares{% endblock %}
+
+{% block content %}
+    <header class="tool-header">
+        <i class="tool-icon fa-solid fa-border-all"></i>
+        <h1>Resolver Sistemas Lineares</h1>
+        <p>Insira a matriz de coeficientes (A) e o vetor de constantes (b) para resolver Ax = b.</p>
+    </header>
+
+    <div class="form-panel">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="matrix-size">Número de equações (ex: 3 para 3x3)</label>
+                <div class="input-group">
+                    <input type="number" id="matrix-size" name="matrix_size" min="2" max="10" value="3" class="form-control" style="flex-grow: 3;">
+                    <button type="button" id="generate-matrix-btn" class="cta-button-secondary">Gerar Matriz</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Matriz Aumentada [A|b]</label>
+                <div id="matrix-grid-container" class="matrix-grid">
+                    </div>
+            </div>
+
+            <div class="form-group">
+                <label for="metodo_sistema">Método de Resolução</label>
+                <select id="metodo_sistema" name="metodo" required>
+                    <option value="gauss">Eliminação de Gauss</option>
+                    <option value="gauss_jordan" disabled>Gauss-Jordan (em breve)</option>
+                    <option value="jacobi" disabled>Método de Jacobi (em breve)</option>
+                </select>
+            </div>
+
+            <button type="submit" class="cta-button">Resolver Sistema</button>
+        </form>
+    </div>
+
+    {% if solucao %}
+    <section class="results-section">
+        <div class="result-card">
+            <h2>Solução Encontrada</h2>
+            <p class="result-value">{{ solucao }}</p>
+        </div>
+    </section>
+    {% endif %}
+
+    <script>
+        const sizeInput = document.getElementById('matrix-size');
+        const generateBtn = document.getElementById('generate-matrix-btn');
+        const gridContainer = document.getElementById('matrix-grid-container');
+
+        function generateMatrix() {
+            const size = parseInt(sizeInput.value);
+            if (size < 2 || size > 10) {
+                alert("Por favor, insira um tamanho entre 2 e 10.");
+                return;
+            }
+
+            gridContainer.innerHTML = '';
+
+            gridContainer.style.gridTemplateColumns = `repeat(${size}, 1fr) auto 1fr`;
+
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.step = 'any';
+                    input.name = `a_${i}_${j}`;
+                    input.placeholder = `a${i+1}${j+1}`;
+                    input.required = true;
+                    gridContainer.appendChild(input);
+                }
+
+                const separator = document.createElement('div');
+                separator.className = 'matrix-separator';
+                gridContainer.appendChild(separator);
+
+                const inputB = document.createElement('input');
+                inputB.type = 'number';
+                inputB.step = 'any';
+                inputB.name = `b_${i}`;
+                inputB.placeholder = `b${i+1}`;
+                inputB.required = true;
+                gridContainer.appendChild(inputB);
+            }
+        }
+        generateMatrix();
+        generateBtn.addEventListener('click', generateMatrix);
+    </script>
+{% endblock %}
