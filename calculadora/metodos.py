@@ -141,3 +141,43 @@ def calcular_gauss_jordan(A, b):
     solucao = Aug[:, n]
 
     return solucao.tolist(), iteracoes
+
+def calcular_jacobi(A, b, tolerancia=1e-5, max_iter=100):
+    A = np.array(A, dtype=float)
+    b = np.array(b, dtype=float)
+    n = len(b)
+    
+    x = np.zeros(n, dtype=float)
+    
+    iteracoes = []
+    
+    for i in range(n):
+        if A[i, i] == 0:
+            print("Erro: Elemento nulo na diagonal principal.")
+            return None, iteracoes
+
+    for k in range(max_iter):
+        x_novo = np.zeros(n, dtype=float)
+        
+        for i in range(n):
+            soma = 0
+            for j in range(n):
+                if i != j:
+                    soma += A[i, j] * x[j]
+            
+            x_novo[i] = (b[i] - soma) / A[i, i]
+        
+        erro = np.max(np.abs(x_novo - x))
+        
+        iteracoes.append({
+            'iteracao': k + 1,
+            'x': x_novo.tolist(),
+            'erro': erro
+        })
+        
+        x = x_novo.copy()
+        if erro < tolerancia:
+            return x.tolist(), iteracoes
+
+    print("Aviso: O método não convergiu no número máximo de iterações.")
+    return x.tolist(), iteracoes

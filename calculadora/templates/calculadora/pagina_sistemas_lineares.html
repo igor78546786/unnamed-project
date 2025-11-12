@@ -36,7 +36,7 @@
                 <select id="metodo_sistema" name="metodo" required>
                     <option value="gauss">Eliminação de Gauss</option>
                     <option value="gauss_jordan">Gauss-Jordan</option>
-                    <option value="jacobi" disabled>Método de Jacobi (em breve)</option>
+                    <option value="jacobi">Método de Jacobi</option>
                 </select>
             </div>
 
@@ -55,7 +55,8 @@
     <section class="results-section">
         
         <div class="result-card">
-            <h2>Solução Encontrada (Vetor x)</h2>
+            <h2>Solução Encontrada</h2>
+            <p class="result-meta">Método: <strong>{{ metodo_utilizado }}</strong></p>
             <div class="solution-vector">
                 {% for val in solucao %}
                     <p>x<sub>{{ forloop.counter }}</sub> ≈ {{ val }}</p>
@@ -64,24 +65,53 @@
         </div>
 
         <div class="step-by-step">
-            <h3>Detalhes da Eliminação (Passo a Passo)</h3>
+            <h3>Detalhes do Cálculo (Passo a Passo)</h3>
             
-            {% for passo in iteracoes %}
+            {% if "Jacobi" in metodo_utilizado %}
                 <div class="matrix-step">
-                    <h4>{{ passo.passo }}</h4>
-                    <table class="matrix-table">
-                        <tbody>
-                            {% for linha in passo.matriz %}
+                    <table class="matrix-table" style="text-align: center;">
+                        <thead>
                             <tr>
-                                {% for valor in linha %}
-                                <td>{{ valor|floatformat:4 }}</td>
+                                <th>k (Iteração)</th>
+                                {% for val in solucao %}
+                                    <th>x<sub>{{ forloop.counter }}</sub></th>
                                 {% endfor %}
+                                <th>Erro Absoluto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for passo in iteracoes %}
+                            <tr>
+                                <td>{{ passo.iteracao }}</td>
+                                {% for x_val in passo.x %}
+                                    <td>{{ x_val|floatformat:5 }}</td>
+                                {% endfor %}
+                                <td>{{ passo.erro|floatformat:6 }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
-            {% endfor %}
+
+            {% else %}
+                {% for passo in iteracoes %}
+                    <div class="matrix-step">
+                        <h4>{{ passo.passo }}</h4>
+                        <table class="matrix-table">
+                            <tbody>
+                                {% for linha in passo.matriz %}
+                                <tr>
+                                    {% for valor in linha %}
+                                    <td>{{ valor|floatformat:4 }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
         </div>
     </section>
     {% endif %}
