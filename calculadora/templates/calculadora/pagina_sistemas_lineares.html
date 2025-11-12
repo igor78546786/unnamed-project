@@ -1,5 +1,7 @@
 {% extends 'calculadora/base.html' %}
 
+{% block body_id %}id="page-sistemas-lineares"{% endblock %}
+
 {% block title %}Sistemas Lineares{% endblock %}
 
 {% block content %}
@@ -33,7 +35,7 @@
                 <label for="metodo_sistema">Método de Resolução</label>
                 <select id="metodo_sistema" name="metodo" required>
                     <option value="gauss">Eliminação de Gauss</option>
-                    <option value="gauss_jordan" disabled>Gauss-Jordan (em breve)</option>
+                    <option value="gauss_jordan">Gauss-Jordan</option>
                     <option value="jacobi" disabled>Método de Jacobi (em breve)</option>
                 </select>
             </div>

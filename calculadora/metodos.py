@@ -1,3 +1,5 @@
+import numpy as np
+
 def calcular_bissecao(funcao, a, b, tolerancia=1e-5, max_iter=100):
 
     iteracoes = []
@@ -104,3 +106,38 @@ def calcular_gauss(A, b):
         soma = np.dot(Aug[i, i+1:n], x[i+1:n])
         x[i] = (Aug[i, n] - soma) / Aug[i, i]
     return x.tolist(), iteracoes
+
+def calcular_gauss_jordan(A, b):
+    A = np.array(A, dtype=float)
+    b = np.array(b, dtype=float)
+    
+    n = len(b)
+    iteracoes = []
+
+    Aug = np.c_[A, b]
+    iteracoes.append({'passo': 'Matriz Aumentada Inicial', 'matriz': Aug.tolist()})
+
+    for k in range(n):
+        max_index = np.argmax(np.abs(Aug[k:, k])) + k
+        if max_index != k:
+            Aug[[k, max_index]] = Aug[[max_index, k]]
+            iteracoes.append({'passo': f'Pivotação: Linha {k+1} <-> Linha {max_index+1}', 'matriz': Aug.tolist()})
+
+        pivo = Aug[k, k]
+        if pivo == 0:
+            print("Erro: Matriz singular.")
+            return None, iteracoes
+
+        Aug[k, :] = Aug[k, :] / pivo
+        iteracoes.append({'passo': f'Normalização da Linha {k+1} (L{k+1} / {pivo:.4f})', 'matriz': Aug.tolist()})
+
+        for i in range(n):
+            if i != k:
+                fator = Aug[i, k]
+                Aug[i, :] = Aug[i, :] - fator * Aug[k, :]
+        
+        iteracoes.append({'passo': f'Eliminação na coluna {k+1}', 'matriz': Aug.tolist()})
+
+    solucao = Aug[:, n]
+
+    return solucao.tolist(), iteracoes

@@ -1,5 +1,7 @@
 {% extends 'calculadora/base.html' %}
 
+{% block body_id %}id="page-encontrar-raiz"{% endblock %}
+
 {% block title %}Encontrar Raíz {% endblock %}
 
 {% block content %}
@@ -61,9 +63,9 @@
         </div>
 
         {% if metodo_utilizado == "Bissecao" or metodo_utilizado == "Falsa Posicao" %}
-        <div class="step-by-step">
+        <div class="step-by-step root-table-container">
             <h3>Detalhes da Convergência (Passo a Passo)</h3>
-            <table>
+            <table class="root-table">
                 <thead>
                     <tr>
                         <th>Iteração</th>
@@ -88,9 +90,9 @@
         </div>
         
         {% elif metodo_utilizado == "Newton" %}
-        <div class="step-by-step">
+        <div class="step-by-step root-table-container">
             <h3>Detalhes da Convergência (Passo a Passo)</h3>
-            <table>
+            <table class="root-table">
                 <thead>
                     <tr>
                         <th>Iteração (i)</th>
