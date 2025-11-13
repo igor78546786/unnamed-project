@@ -28,6 +28,7 @@
                         <i class="icon fa-solid fa-house"></i>
                         <a href="{% url 'pagina_inicial' %}">Página Inicial</a>
                     </li>
+
                     <li class="nav-item {% if request.resolver_match.url_name == 'encontrar_raiz' %}active{% endif %}">
                         <i class="icon fa-solid fa-chart-line"></i>
                         <a href="{% url 'encontrar_raiz' %}">Encontrar Raíz</a>
@@ -36,6 +37,14 @@
                     <li class="nav-item {% if request.resolver_match.url_name == 'sistemas_lineares' %}active{% endif %}">
                         <i class="icon fa-solid fa-border-all"></i>
                         <a href="{% url 'sistemas_lineares' %}">Sistemas Lineares</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <i class="icon fa-solid fa-book-open"></i>
+                        <a href="https://pt.wikiversity.org/wiki/Introdu%C3%A7%C3%A3o_a_M%C3%A9todos_Num%C3%A9ricos" target="_blank">
+                            O que é cálculo numérico?
+                            <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.7rem; margin-left: 5px;"></i>
+                        </a>
                     </li>
                 </ul>
             </nav>
