@@ -64,6 +64,12 @@
             <p class="result-meta">Calculado com o <strong>{{ metodo_utilizado }}</strong> em {{ iteracoes|length }} iterações.</p>
         </div>
 
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a href="{% url 'exportar_relatorio' %}" class="cta-button" style="background-color: #198754; text-decoration: none; display: inline-block; width: auto; padding: 10px 30px;">
+                <i class="fa-solid fa-file-export"></i> Exportar Relatório (.txt)
+            </a>
+        </div>
+
         {% if metodo_utilizado == "Bissecao" or metodo_utilizado == "Falsa Posicao" %}
         <div class="step-by-step root-table-container">
             <h3>Detalhes da Convergência (Passo a Passo)</h3>

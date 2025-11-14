@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 import sympy
 from .metodos import (
     calcular_bissecao, calcular_falsa_posicao, calcular_newton,
@@ -52,6 +53,22 @@ def pagina_encontrar_raiz(request):
                 contexto['resultado'] = round(resultado_final, 5)
                 contexto['metodo_utilizado'] = metodo_nome_exibicao
                 contexto['iteracoes'] = iteracoes
+
+                relatorio = f"=== RELATÓRIO ===\n\n"
+                relatorio += f"FERRAMENTA: Encontrar Raíz de Equação\n"
+                relatorio += f"MÉTODO: {metodo_nome_exibicao}\n"
+                relatorio += f"FUNÇÃO: f(x) = {funcao_texto}\n\n"
+                relatorio += f"--- RESULTADO FINAL ---\n"
+                relatorio += f"Raíz Aproximada: {round(resultado_final, 5)}\n\n"
+                relatorio += f"--- PASSO A PASSO ({len(iteracoes)} iterações) ---\n"
+                
+                for passo in iteracoes:
+                    if 'a' in passo:
+                        relatorio += f"Iteração {passo['n']}: a={passo['a']:.5f}, b={passo['b']:.5f}, p={passo['p']:.5f}, f(p)={passo['f_p']:.5f}\n"
+                    else:
+                        relatorio += f"Iteração {passo['n']}: xi={passo['xi']:.5f}, f(xi)={passo['f_xi']:.5f}\n"
+                
+                request.session['relatorio_download'] = relatorio
             else:
                 contexto['erro'] = f"Não foi possível encontrar uma raiz com o {metodo_nome_exibicao}. Verifique o intervalo ou a estimativa inicial."
 
@@ -100,9 +117,29 @@ def pagina_sistemas_lineares(request):
                 solucao, iteracoes = calcular_jacobi(matriz_A, vetor_b)
 
             if solucao is not None:
-                contexto['solucao'] = [round(val, 5) for val in solucao]
+                solucao_arredondada = [round(val, 5) for val in solucao]
+                contexto['solucao'] = solucao_arredondada
                 contexto['iteracoes'] = iteracoes
                 contexto['metodo_utilizado'] = metodo_nome_exibicao
+
+                relatorio = f"=== RELATÓRIO ===\n\n"
+                relatorio += f"FERRAMENTA: Sistemas Lineares\n"
+                relatorio += f"MÉTODO: {metodo_nome_exibicao}\n"
+                relatorio += f"DIMENSÃO: {M_linhas}x{N_colunas}\n\n"
+                relatorio += f"--- RESULTADO FINAL (Vetor X) ---\n"
+                relatorio += f"{solucao_arredondada}\n\n"
+                relatorio += f"--- PASSO A PASSO ---\n"
+
+                if metodo == 'jacobi':
+                    for passo in iteracoes:
+                        relatorio += f"Iteração {passo['iteracao']}: Erro={passo['erro']:.6f} | X={passo['x']}\n"
+                else:
+                    for passo in iteracoes:
+                        relatorio += f"\n>> {passo['passo']}:\n"
+                        for linha in passo['matriz']:
+                            relatorio += f"{linha}\n"
+                
+                request.session['relatorio_download'] = relatorio
             else:
                 contexto['erro'] = f"Não foi possível encontrar uma solução com {metodo_nome_exibicao} (matriz singular ou não convergiu)."
 
@@ -110,3 +147,10 @@ def pagina_sistemas_lineares(request):
             contexto['erro'] = f"Erro ao processar a matriz: {e}"
 
     return render(request, 'calculadora/pagina_sistemas_lineares.html', contexto)
+
+def baixar_relatorio(request):
+    conteudo_relatorio = request.session.get('relatorio_download', 'Nenhum cálculo realizado recentemente.')
+    
+    response = HttpResponse(conteudo_relatorio, content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename="relatorio_calculo.txt"'
+    return response
