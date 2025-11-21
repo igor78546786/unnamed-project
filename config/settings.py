@@ -28,13 +28,13 @@ DEBUG = True
 
 
 ALLOWED_HOSTS = [
-    'calculosnumericos-edhjeeedduh9awe3.brazilsouth-01.azurewebsites.net',
+    'calcnum-cugeakgkejhgb4ct.brazilsouth-01.azurewebsites.net',
     '127.0.0.1',
     'localhost',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://calculosnumericos-edhjeeedduh9awe3.brazilsouth-01.azurewebsites.net' 
+    'https://calcnum-cugeakgkejhgb4ct.brazilsouth-01.azurewebsites.net' 
 ]
 
 # Application definition
@@ -133,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 

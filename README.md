@@ -1,16 +1,33 @@
-# unnamed-project
+# calcnum
 
-Projeto de desenvolvimento de webapp para cálculo com métodos numéricos.
+Uma aplicação web desenvolvida em Django para resolução de problemas matemáticos utilizando Métodos Numéricos (Raízes de Funções e Sistemas Lineares).
 
-## Quadro no Trello:
-<img width="1783" height="840" alt="image" src="https://github.com/user-attachments/assets/dc170d80-3560-4d45-822f-b354a9e6d813" />
+---
 
-## Protótipo de design:
-[https://www.figma.com/design/QoN558aC6f7YHRu31ZkXHw/M%C3%A9todos-num%C3%A9ricos?node-id=0-1&m=dev&t=0VaTZbIuD8tJp62E-1](https://www.figma.com/design/QoN558aC6f7YHRu31ZkXHw/M%C3%A9todos-num%C3%A9ricos?node-id=0-1&t=0VaTZbIuD8tJp62E-1)
+### 🌐 Acesso Online
+🔗[Clique para acessar a aplicação rodando na Azure](https://calcnum-cugeakgkejhgb4ct.brazilsouth-01.azurewebsites.net)
 
-## Diagrama de atividades do funcionamento do sistema:
-<img width="348" height="1131" alt="image" src="https://github.com/user-attachments/assets/69375093-952f-4d2a-9895-0efe3042de8a" />
+---
+
+## Quadro
+<img width="1492" height="820" alt="image" src="https://github.com/user-attachments/assets/b49fc9e8-20e4-4c5d-8f00-ca70b1a7db57" />
 
 
+## Protótipo de design
+🔗[Clique para acessar o protótipo no Figma](https://www.figma.com/design/QoN558aC6f7YHRu31ZkXHw/M%C3%A9todos-num%C3%A9ricos?node-id=0-1&t=0VaTZbIuD8tJp62E-1)
 
-https://calculosnumericos-edhjeeedduh9awe3.brazilsouth-01.azurewebsites.net/
+
+## Fluxo do usuário (Diagrama de atividades)
+<img width="616" height="961" alt="calcnum-final drawio" src="https://github.com/user-attachments/assets/e07952fc-1664-47cc-a32e-d8828c64c43c" />
+
+---
+
+## 🛠️ Ferramentas Utilizadas
+
+* **Linguagem:** Python 3.13
+* **Framework Web:** Django
+* **Cálculo Numérico:** NumPy, SymPy
+* **Banco de Dados:** PostgreSQL (Produção na Azure), SQLite (Desenvolvimento)
+* **Hospedagem (Deploy):** Microsoft Azure App Service
+* **Design:** Figma
+* **Gestão:** Trello

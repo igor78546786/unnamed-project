@@ -1,0 +1,64 @@
+{% extends 'calculadora/base.html' %}
+
+{% block body_id %}id="page-historico"{% endblock %}
+
+{% block title %}Histórico{% endblock %}
+
+{% block content %}
+    <header class="tool-header">
+        <i class="tool-icon fa-solid fa-clock-rotate-left"></i>
+        <h1>Histórico de Sessões</h1>
+        <p>Reveja os cálculos que você salvou.</p>
+    </header>
+
+    <div class="form-panel">
+        <ul style="list-style: none; padding: 0;">
+            {% for sessao in sessoes %}
+            <li style="background: #f8f9fa; margin-bottom: 15px; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                
+                <div>
+                    {% if sessao.tipo_ferramenta == 'raiz' %}
+                        <i class="fa-solid fa-chart-line" style="color: #0d6efd; margin-right: 10px;"></i>
+                        <strong>Encontrar Raíz</strong>
+                    {% else %}
+                        <i class="fa-solid fa-border-all" style="color: #0d6efd; margin-right: 10px;"></i>
+                        <strong>Sistemas Lineares</strong>
+                    {% endif %}
+                    
+                    <span style="color: #6c757d; margin: 0 10px;">|</span>
+                    
+                    <div style="font-size: 0.85rem; color: #6c757d; margin-top: 5px;">
+                        <i class="fa-regular fa-calendar"></i> {{ sessao.data_criacao|date:"d/m/Y H:i" }}
+                    </div>
+                </div>
+                <span>
+                        {% if sessao.metodo == 'bissecao' %}
+                            Método da Bisseção
+                        {% elif sessao.metodo == 'falsa_posicao' %}
+                            Método da Falsa Posição
+                        {% elif sessao.metodo == 'newton' %}
+                            Método de Newton-Raphson
+                        {% elif sessao.metodo == 'gauss' %}
+                            Eliminação de Gauss
+                        {% elif sessao.metodo == 'gauss_jordan' %}
+                            Gauss-Jordan
+                        {% elif sessao.metodo == 'jacobi' %}
+                            Método de Jacobi
+                        {% else %}
+                            {{ sessao.metodo|title }}
+                        {% endif %}
+                </span>
+
+                <a href="{% url 'carregar_sessao' sessao.id %}" class="cta-button" style="width: auto; padding: 10px 20px; text-decoration: none; font-size: 0.9rem;">
+                    <i class="fa-solid fa-folder-open"></i> Carregar
+                </a>
+            </li>
+            {% empty %}
+                <div style="text-align: center; padding: 40px; color: #6c757d;">
+                    <i class="fa-solid fa-box-open" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                    <p>Nenhuma sessão salva ainda.</p>
+                </div>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

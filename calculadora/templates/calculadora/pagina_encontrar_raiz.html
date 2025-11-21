@@ -2,7 +2,7 @@
 
 {% block body_id %}id="page-encontrar-raiz"{% endblock %}
 
-{% block title %}Encontrar Raíz {% endblock %}
+{% block title %}Encontrar Raíz{% endblock %}
 
 {% block content %}
     <header class="tool-header">
@@ -17,29 +17,32 @@
             
             <div class="form-group">
                 <label for="funcao">Função f(x)</label>
-                <input type="text" id="funcao" name="funcao_texto" placeholder="Ex: x**3 - 2*x + 1" required>
+                <input type="text" id="funcao" name="funcao_texto" placeholder="Ex: x^3 - 2x + 1" value="{{ inputs.funcao_texto|default:'' }}" required>
             </div>
             
             <div class="form-group">
-                <label for="metodo">Método de Cálculo</label>
+                <label for="metodo">
+                    Método de Cálculo 
+                    <i class="fa-solid fa-circle-question help-icon" id="btn-open-help" title="Ajuda sobre os métodos"></i>
+                </label>
                 <select id="seletor-metodo" name="metodo" required>
-                    <option value="bissecao" selected>Método da Bisseção</option>
-                    <option value="falsa_posicao">Método da Falsa Posição</option>
-                    <option value="newton">Método de Newton-Raphson</option>
+                    <option value="bissecao" {% if metodo_selecionado == 'bissecao' %}selected{% endif %}>Método da Bisseção</option>
+                    <option value="falsa_posicao" {% if metodo_selecionado == 'falsa_posicao' %}selected{% endif %}>Método da Falsa Posição</option>
+                    <option value="newton" {% if metodo_selecionado == 'newton' %}selected{% endif %}>Método de Newton-Raphson</option>
                 </select>
             </div>
 
             <div class="form-group" id="grupo-intervalo">
                 <label>Intervalo [a, b]</label>
                 <div class="input-group">
-                    <input type="number" step="any" name="intervalo_a" placeholder="a">
-                    <input type="number" step="any" name="intervalo_b" placeholder="b">
+                    <input type="number" step="any" name="intervalo_a" placeholder="a" value="{{ inputs.intervalo_a|default:'' }}">
+                    <input type="number" step="any" name="intervalo_b" placeholder="b" value="{{ inputs.intervalo_b|default:'' }}">
                 </div>
             </div>
 
             <div class="form-group hidden" id="grupo-estimativa">
                 <label for="estimativa">Estimativa Inicial (x0)</label>
-                <input type="number" step="any" id="estimativa" name="estimativa_inicial" placeholder="Ex: 1.5">
+                <input type="number" step="any" id="estimativa" name="estimativa_inicial" placeholder="Ex: 1.5" value="{{ inputs.estimativa_inicial|default:'' }}">
             </div>
 
             <button type="submit" class="cta-button">Calcular Raíz</button>
@@ -53,16 +56,25 @@
     </div>
     {% endif %}
 
-    {% if resultado %}
+    {% if resultado is not None %}
     <section class="results-section">
-        
         <div class="result-card">
             <h2>Resultado Encontrado</h2>
             <p class="result-value">x ≈ {{ resultado }}</p>
             <p class="result-meta">Calculado com o <strong>{{ metodo_utilizado }}</strong> em {{ iteracoes|length }} iterações.</p>
         </div>
 
-        {% if metodo_utilizado == "Bissecao" or metodo_utilizado == "Falsa Posicao" %}
+        <div style="text-align: center; margin-bottom: 20px; margin-top: 30px; gap: 10px; display: flex; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'exportar_relatorio' %}" class="cta-button" style="background-color: #198754; width: auto; padding: 10px 25px; text-decoration: none;">
+                <i class="fa-solid fa-file-export"></i> Exportar (.txt)
+            </a>
+            
+            <a href="{% url 'salvar_sessao' %}" class="cta-button" style="background-color: #0d6efd; width: auto; padding: 10px 25px; text-decoration: none;">
+                <i class="fa-solid fa-floppy-disk"></i> Salvar Sessão
+            </a>
+        </div>
+
+        {% if metodo_selecionado == "bissecao" or metodo_selecionado == "falsa_posicao" %}
         <div class="step-by-step root-table-container">
             <h3>Detalhes da Convergência (Passo a Passo)</h3>
             <table class="root-table">
@@ -89,7 +101,7 @@
             </table>
         </div>
         
-        {% elif metodo_utilizado == "Newton" %}
+        {% elif metodo_utilizado == "newton" %}
         <div class="step-by-step root-table-container">
             <h3>Detalhes da Convergência (Passo a Passo)</h3>
             <table class="root-table">
@@ -118,21 +130,73 @@
     </section>
     {% endif %}
 
+    <div id="help-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" id="btn-close-help">&times;</span>
+            <h2 style="margin-bottom: 20px; text-align: center;">Comparação de Métodos</h2>
+
+            <div class="help-section">
+                <h3>Método da Bisseção</h3>
+                <p>Divide o intervalo repetidamente ao meio para cercar a raiz.</p>
+                <ul>
+                    <li><strong>Vantagem:</strong> Convergência garantida (é muito robusto).</li>
+                    <li><strong>Desvantagem:</strong> É lento comparado aos outros métodos.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>Método da Falsa Posição</h3>
+                <p>Usa uma linha reta entre os pontos do intervalo para estimar a raiz.</p>
+                <ul>
+                    <li><strong>Vantagem:</strong> Geralmente mais rápido que a Bisseção.</li>
+                    <li><strong>Desvantagem:</strong> Pode ser lento para funções com forte curvatura.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>Método de Newton-Raphson</h3>
+                <p>Usa a derivada da função (tangente) para encontrar a raiz rapidamente.</p>
+                <ul>
+                    <li><strong>Vantagem:</strong> Convergência extremamente rápida (quadrática).</li>
+                    <li><strong>Desvantagem:</strong> Exige uma boa estimativa inicial e o cálculo da derivada.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <script>
+        const modal = document.getElementById('help-modal');
+        const btnOpen = document.getElementById('btn-open-help');
+        const btnClose = document.getElementById('btn-close-help');
+
+        btnOpen.onclick = function() { modal.style.display = "flex"; }
+        btnClose.onclick = function() { modal.style.display = "none"; }
+        
+        window.onclick = function(event) {
+            if (event.target == modal) { modal.style.display = "none"; }
+        }
+
         const seletorMetodo = document.getElementById('seletor-metodo');
         const grupoIntervalo = document.getElementById('grupo-intervalo');
         const grupoEstimativa = document.getElementById('grupo-estimativa');
+        const inputsIntervalo = grupoIntervalo.querySelectorAll('input');
+        const inputEstimativa = document.getElementById('estimativa');
 
         function atualizarCampos() {
             if (seletorMetodo.value === 'newton') {
                 grupoIntervalo.classList.add('hidden');
                 grupoEstimativa.classList.remove('hidden');
+                inputsIntervalo.forEach(input => input.required = false);
+                inputEstimativa.required = true;
             } else {
                 grupoIntervalo.classList.remove('hidden');
                 grupoEstimativa.classList.add('hidden');
+                inputsIntervalo.forEach(input => input.required = true);
+                inputEstimativa.required = false;
             }
         }
         seletorMetodo.addEventListener('change', atualizarCampos);
+        
         atualizarCampos();
     </script>
 {% endblock %}

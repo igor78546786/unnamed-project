@@ -5,6 +5,8 @@
 {% block title %}Sistemas Lineares{% endblock %}
 
 {% block content %}
+    {{ inputs|json_script:"saved-data" }}
+
     <header class="tool-header">
         <i class="tool-icon fa-solid fa-border-all"></i>
         <h1>Resolver Sistemas Lineares</h1>
@@ -18,25 +20,27 @@
             <div class="form-group">
                 <label>Tamanho do Sistema (M equações, N variáveis)</label>
                 <div class="input-group-columns">
-                    <input type="number" id="matrix-rows" name="matrix_rows" min="2" max="10" value="3" class="form-control" title="Número de Equações (Linhas)">
+                    <input type="number" id="matrix-rows" name="matrix_rows" min="2" max="10" value="{{ inputs.matrix_rows|default:3 }}" class="form-control" title="Número de Equações (Linhas)">
                     <span>x</span>
-                    <input type="number" id="matrix-cols" name="matrix_cols" min="2" max="10" value="3" class="form-control" title="Número de Variáveis (Colunas)">
+                    <input type="number" id="matrix-cols" name="matrix_cols" min="2" max="10" value="{{ inputs.matrix_cols|default:3 }}" class="form-control" title="Número de Variáveis (Colunas)">
                     <button type="button" id="generate-matrix-btn" class="cta-button-secondary">Gerar Matriz</button>
                 </div>
             </div>
 
             <div class="form-group">
                 <label>Matriz Aumentada [A|b]</label>
-                <div id="matrix-grid-container" class="matrix-grid">
-                    </div>
+                <div id="matrix-grid-container" class="matrix-grid"></div>
             </div>
 
             <div class="form-group">
-                <label for="metodo_sistema">Método de Resolução</label>
+                <label for="metodo_sistema">
+                    Método de Resolução
+                    <i class="fa-solid fa-circle-question help-icon" id="btn-open-help" title="Ajuda sobre os métodos"></i>
+                </label>
                 <select id="metodo_sistema" name="metodo" required>
-                    <option value="gauss">Eliminação de Gauss</option>
-                    <option value="gauss_jordan">Gauss-Jordan</option>
-                    <option value="jacobi" disabled>Método de Jacobi (em breve)</option>
+                    <option value="gauss" {% if metodo_selecionado == 'gauss' %}selected{% endif %}>Eliminação de Gauss</option>
+                    <option value="gauss_jordan" {% if metodo_selecionado == 'gauss_jordan' %}selected{% endif %}>Gauss-Jordan</option>
+                    <option value="jacobi" {% if metodo_selecionado == 'jacobi' %}selected{% endif %}>Método de Jacobi</option>
                 </select>
             </div>
 
@@ -53,9 +57,9 @@
 
     {% if solucao %}
     <section class="results-section">
-        
         <div class="result-card">
-            <h2>Solução Encontrada (Vetor x)</h2>
+            <h2>Solução Encontrada</h2>
+            <p class="result-meta">Método: <strong>{{ metodo_utilizado }}</strong></p>
             <div class="solution-vector">
                 {% for val in solucao %}
                     <p>x<sub>{{ forloop.counter }}</sub> ≈ {{ val }}</p>
@@ -63,28 +67,108 @@
             </div>
         </div>
 
-        <div class="step-by-step">
-            <h3>Detalhes da Eliminação (Passo a Passo)</h3>
+        <div style="text-align: center; margin-bottom: 20px; margin-top: 30px; gap: 10px; display: flex; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'exportar_relatorio' %}" class="cta-button" style="background-color: #198754; width: auto; padding: 10px 25px; text-decoration: none;">
+                <i class="fa-solid fa-file-export"></i> Exportar (.txt)
+            </a>
             
-            {% for passo in iteracoes %}
+            <a href="{% url 'salvar_sessao' %}" class="cta-button" style="background-color: #0d6efd; width: auto; padding: 10px 25px; text-decoration: none;">
+                <i class="fa-solid fa-floppy-disk"></i> Salvar Sessão
+            </a>
+        </div>
+
+        <div class="step-by-step">
+            <h3>Detalhes do Cálculo (Passo a Passo)</h3>
+            {% if "Jacobi" in metodo_utilizado %}
                 <div class="matrix-step">
-                    <h4>{{ passo.passo }}</h4>
-                    <table class="matrix-table">
-                        <tbody>
-                            {% for linha in passo.matriz %}
+                    <table class="matrix-table" style="text-align: center;">
+                        <thead>
                             <tr>
-                                {% for valor in linha %}
-                                <td>{{ valor|floatformat:4 }}</td>
-                                {% endfor %}
+                                <th>k (Iteração)</th>
+                                {% for val in solucao %}<th>x<sub>{{ forloop.counter }}</sub></th>{% endfor %}
+                                <th>Erro Absoluto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for passo in iteracoes %}
+                            <tr>
+                                <td>{{ passo.iteracao }}</td>
+                                {% for x_val in passo.x %}<td>{{ x_val|floatformat:5 }}</td>{% endfor %}
+                                <td>{{ passo.erro|floatformat:6 }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
-            {% endfor %}
+            {% else %}
+                {% for passo in iteracoes %}
+                    <div class="matrix-step">
+                        <h4>{{ passo.passo }}</h4>
+                        <table class="matrix-table">
+                            <thead>
+                                <tr>
+                                    {% for valor in passo.matriz.0 %}
+                                        {% if forloop.last %}
+                                            <th style="border-left: 2px solid #0d6efd;">Constante (b)</th>
+                                        {% else %}
+                                            <th>x<sub>{{ forloop.counter }}</sub></th>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for linha in passo.matriz %}
+                                <tr>
+                                    {% for valor in linha %}
+                                        <td>{{ valor|floatformat:4 }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
     </section>
     {% endif %}
+
+     <div id="help-modal" class="modal-overlay">
+
+        <div class="modal-content">
+
+            <span class="close-btn" id="btn-close-help">&times;</span>
+
+            <h2 style="margin-bottom: 20px; text-align: center;">Métodos de Resolução</h2>
+
+            <div class="help-section">
+                <h3>Eliminação de Gauss</h3>
+                <p>Transforma o sistema em uma matriz triangular superior para resolver por substituição.</p>
+                <ul>
+                    <li><strong>Vantagem:</strong> Método clássico e eficiente para sistemas quadrados com solução única.</li>
+                    <li><strong>Desvantagem:</strong> Requer etapa extra de substituição reversa.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>Gauss-Jordan</h3>
+                <p>Transforma o sistema diretamente em uma matriz identidade.</p>
+                <ul>
+                    <li><strong>Vantagem:</strong> Entrega a solução final diretamente na matriz.</li>
+                    <li><strong>Desvantagem:</strong> Realiza mais operações aritméticas que Gauss simples.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>Método de Jacobi</h3>
+                <p>Método iterativo que chuta valores iniciais e os refina a cada passo.</p>
+                <ul>
+                    <li><strong>Vantagem:</strong> Erro diminui progressivamente; bom para sistemas grandes.</li>
+                    <li><strong>Desvantagem:</strong> Só funciona se a matriz for Diagonal Dominante (números da diagonal maiores que a soma dos vizinhos).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
     <script>
         const rowsInput = document.getElementById('matrix-rows');
@@ -92,12 +176,15 @@
         const generateBtn = document.getElementById('generate-matrix-btn');
         const gridContainer = document.getElementById('matrix-grid-container');
 
+        const savedDataElement = document.getElementById('saved-data');
+        const savedData = savedDataElement ? JSON.parse(savedDataElement.textContent) : null;
+
         function generateMatrix() {
             const M = parseInt(rowsInput.value); 
             const N = parseInt(colsInput.value); 
 
             if (M < 2 || M > 10 || N < 2 || N > 10) {
-                alert("Por favor, insira um tamanho entre 2 e 10 para linhas e colunas.");
+                alert("Por favor, insira um tamanho entre 2 e 10.");
                 return;
             }
 
@@ -109,9 +196,15 @@
                     const input = document.createElement('input');
                     input.type = 'number';
                     input.step = 'any';
-                    input.name = `a_${i}_${j}`;
+                    const name = `a_${i}_${j}`;
+                    input.name = name;
                     input.placeholder = `a${i+1}${j+1}`;
                     input.required = true;
+                    
+                    if (savedData && savedData[name]) {
+                        input.value = savedData[name];
+                    }
+                    
                     gridContainer.appendChild(input);
                 }
 
@@ -122,14 +215,27 @@
                 const inputB = document.createElement('input');
                 inputB.type = 'number';
                 inputB.step = 'any';
-                inputB.name = `b_${i}`;
+                const nameB = `b_${i}`;
+                inputB.name = nameB;
                 inputB.placeholder = `b${i+1}`;
                 inputB.required = true;
+
+                if (savedData && savedData[nameB]) {
+                    inputB.value = savedData[nameB];
+                }
+
                 gridContainer.appendChild(inputB);
             }
         }
 
         generateMatrix();
         generateBtn.addEventListener('click', generateMatrix);
+
+        const modal = document.getElementById('help-modal');
+        const btnOpen = document.getElementById('btn-open-help');
+        const btnClose = document.getElementById('btn-close-help');
+        btnOpen.onclick = function() { modal.style.display = "flex"; }
+        btnClose.onclick = function() { modal.style.display = "none"; }
+        window.onclick = function(event) { if (event.target == modal) modal.style.display = "none"; }
     </script>
 {% endblock %}
